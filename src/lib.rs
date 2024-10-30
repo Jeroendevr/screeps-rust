@@ -5,14 +5,7 @@ use std::{
 
 use js_sys::{JsString, Object, Reflect};
 use log::*;
-use screeps::{
-    constants::{ErrorCode, Part, ResourceType},
-    enums::StructureObject,
-    find, game,
-    local::ObjectId,
-    objects::{Creep, Source, StructureController},
-    prelude::*,
-};
+use screeps::{constants::{ErrorCode, Part, ResourceType}, enums::StructureObject, find, game, local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, StructureSpawn};
 use wasm_bindgen::prelude::*;
 
 mod logging;
@@ -65,6 +58,7 @@ pub fn game_loop() {
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
+            spawn_creep(&spawn);
             match spawn.spawn_creep(&body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
@@ -101,6 +95,10 @@ pub fn game_loop() {
     }
 
     info!("done! cpu: {}", game::cpu::get_used())
+}
+
+fn spawn_creep(spawn: &StructureSpawn, body: Part) {
+    info!("spawn spawning is {}",spawn.name())
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
