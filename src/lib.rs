@@ -97,7 +97,7 @@ pub fn game_loop() {
     info!("done! cpu: {}", game::cpu::get_used())
 }
 
-fn spawn_creep(spawn: &StructureSpawn, body: Part) {
+fn spawn_creep(spawn: &StructureSpawn) {
     info!("spawn spawning is {}",spawn.name())
 }
 
