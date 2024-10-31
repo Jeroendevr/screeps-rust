@@ -58,7 +58,7 @@ pub fn game_loop() {
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
-            match spawn_creep(&spawn, &body, &name) {
+            match spawn_creep_with_options(&spawn, &body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
             }
