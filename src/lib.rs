@@ -5,7 +5,7 @@ use std::{
 
 use js_sys::{JsString, Object, Reflect};
 use log::*;
-use screeps::{constants::{ErrorCode, Part, ResourceType}, enums::StructureObject, find, game, local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, StructureSpawn};
+use screeps::{constants::{ErrorCode, Part, ResourceType}, enums::StructureObject, find, game, local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, SpawnOptions, StructureSpawn};
 use wasm_bindgen::prelude::*;
 
 mod logging;
@@ -99,6 +99,11 @@ pub fn game_loop() {
 fn spawn_creep(spawn: &StructureSpawn, &body: &[Part;4], name: &str) -> Result<(), ErrorCode> {
     info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
     spawn.spawn_creep(&body, &name)
+}
+
+fn spawn_creep_with_options(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), ErrorCode> {
+    let opts = SpawnOptions::new().memory(JsValue::from_str("harvester"));
+    spawn.spawn_creep_with_options(&body, name, &opts)
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
