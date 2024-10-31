@@ -58,8 +58,7 @@ pub fn game_loop() {
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
-            spawn_creep(&spawn);
-            match spawn.spawn_creep(&body, &name) {
+            match spawn_creep(&spawn, &body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
             }
@@ -94,11 +93,12 @@ pub fn game_loop() {
         }
     }
 
-    info!("done! cpu: {}", game::cpu::get_used())
+    // info!("done! cpu: {}", game::cpu::get_used())
 }
 
-fn spawn_creep(spawn: &StructureSpawn) {
-    info!("spawn spawning is {}",spawn.name())
+fn spawn_creep(spawn: &StructureSpawn, &body: &[Part;4], name: &str) -> Result<(), ErrorCode> {
+    info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
+    spawn.spawn_creep(&body, &name)
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
