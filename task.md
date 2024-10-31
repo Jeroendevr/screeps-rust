@@ -16,3 +16,11 @@ fn spawn_creep(spawn: &StructureSpawn) {
 ## Question
 How to type a list of enums with a unkown size at compile time?
 
+## Roles
+
+Add role Harvester to currently spawning creeps
+
+### Provide the role to the Creep using
+
+SpawnOptions::new().memory()
+Where memory needs a jsValue if the form of { role: harvester } which is an object
