@@ -5,7 +5,11 @@ use std::{
 
 use js_sys::{JsString, Object, Reflect};
 use log::*;
-use screeps::{constants::{ErrorCode, Part, ResourceType}, enums::StructureObject, find, game, local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, SpawnOptions, StructureSpawn};
+use screeps::{
+    action_error_codes::*,
+    constants::{Part, ResourceType},
+    enums::StructureObject, find, game,
+    local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, SpawnOptions, StructureSpawn};
 use wasm_bindgen::prelude::*;
 
 mod logging;
@@ -26,6 +30,7 @@ enum CreepTarget {
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
 }
+
 
 // add wasm_bindgen to any function you would like to expose for call from js
 // to use a reserved name as a function name, use `js_name`:
@@ -55,7 +60,7 @@ pub fn game_loop() {
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
         if spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum() {
-            // create a unique name, spawn.
+
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
             match spawn_creep_with_options(&spawn, &body, &name) {
@@ -96,13 +101,23 @@ pub fn game_loop() {
     // info!("done! cpu: {}", game::cpu::get_used())
 }
 
-fn spawn_creep(spawn: &StructureSpawn, &body: &[Part;4], name: &str) -> Result<(), ErrorCode> {
-    info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
-    spawn.spawn_creep(&body, &name)
+#[wasm_bindgen]
+pub enum RoleCreep {
+    Harvester,
 }
 
-fn spawn_creep_with_options(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), ErrorCode> {
+fn spawn_creep(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), screeps::ErrorCode> {
+    info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
+    match spawn.spawn_creep(&body, &name) {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            warn!("couldn't spawn: {:?}", e);
+        }
+}
+
+    fn spawn_creep_with_options(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), screeps::ErrorCode> {
     let opts = SpawnOptions::new().memory(JsValue::from_str("harvester"));
+        info!("Spawn is spawning creep with role 'harvester");
     spawn.spawn_creep_with_options(&body, name, &opts)
 }
 
