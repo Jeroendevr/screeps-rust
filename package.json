@@ -5,7 +5,7 @@
   "files": [
     "dist/"
   ],
-  "main": "dist/main.js",
+  "main": "dist/min.js",
   "scripts": {
     "deploy": "node js_tools/deploy.js"
   },

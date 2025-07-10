@@ -70,6 +70,7 @@ pub fn game_loop() {
         }
     }
 
+
     // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
     // is used; this should be removed if you're using RawMemory/serde for persistence
     if game::time() % 1000 == 0 {
@@ -106,19 +107,21 @@ pub enum RoleCreep {
     Harvester,
 }
 
-fn spawn_creep(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), screeps::ErrorCode> {
+fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode> {
     info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
-    match spawn.spawn_creep(&body, &name) {
+    match spawn.spawn_creep(body, name) {
         Ok(()) => Ok(()),
         Err(e) => {
             warn!("couldn't spawn: {:?}", e);
+            Err(e)
         }
+    }
 }
 
-    fn spawn_creep_with_options(spawn: &StructureSpawn, &body: &[Part; 4], name: &str) -> Result<(), screeps::ErrorCode> {
+fn spawn_creep_with_options(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode> {
     let opts = SpawnOptions::new().memory(JsValue::from_str("harvester"));
-        info!("Spawn is spawning creep with role 'harvester");
-    spawn.spawn_creep_with_options(&body, name, &opts)
+    info!("Spawn is spawning creep with role 'harvester");
+    spawn.spawn_creep_with_options(body, name, &opts)
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
@@ -140,7 +143,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                         creep
                             .upgrade_controller(&controller)
                             .unwrap_or_else(|e| match e {
-                                ErrorCode::NotInRange => {
+                                UpgradeControllerErrorCode::NotInRange => {
                                     let _ = creep.move_to(&controller);
                                 }
                                 _ => {
