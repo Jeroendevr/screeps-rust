@@ -2,7 +2,19 @@
 
 ## 2025 Notes and questions
 
-Keep rust on 1.81
+### Build Tower
+
+- [ ] Make a builder role
+  - [ ] Make one builder regardless of other creep
+    - [ ] Count creep per role
+      - [ ] What is the best way to count the creep, call the creep memory, this needs a Rust-JS call or can it be done
+        withing Rust?
+
+#### Role Harvester
+
+Harvester Creep only have 'harvester' stored not the dict 'role:harvester' try that first
+
+## Keep rust on 1.81
 
 ### Upgrade to 0.23.0 of the screeps-game-api
 
@@ -23,7 +35,7 @@ fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(
 Error types do not have to be imported with their hierarchy to be used
 
 ```rust
-fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode>
+fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode>;
 ```
 
 ```rust

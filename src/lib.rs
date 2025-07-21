@@ -10,6 +10,7 @@ use screeps::{
     constants::{Part, ResourceType},
     enums::StructureObject, find, game,
     local::ObjectId, objects::{Creep, Source, StructureController}, prelude::*, SpawnOptions, StructureSpawn};
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 mod logging;
@@ -102,10 +103,7 @@ pub fn game_loop() {
     // info!("done! cpu: {}", game::cpu::get_used())
 }
 
-#[wasm_bindgen]
-pub enum RoleCreep {
-    Harvester,
-}
+
 
 fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode> {
     info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
@@ -119,9 +117,19 @@ fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(
 }
 
 fn spawn_creep_with_options(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode> {
-    let opts = SpawnOptions::new().memory(JsValue::from_str("harvester"));
+    let opts = SpawnOptions::new().memory(serde_wasm_bindgen::to_value(&CreepMemory { role: RoleCreep::Harvester }).unwrap());
     info!("Spawn is spawning creep with role 'harvester");
     spawn.spawn_creep_with_options(body, name, &opts)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum RoleCreep {
+    Harvester,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CreepMemory {
+    pub role: RoleCreep,
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
