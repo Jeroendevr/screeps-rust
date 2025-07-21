@@ -12,7 +12,7 @@
 
 #### Role Harvester
 
-Harvester Creep only have 'harvester' stored not the dict 'role:harvester' try that first
+- [x] Harvester Creep only have 'harvester' stored not the dict 'role:harvester' try that first
 
 ## Keep rust on 1.81
 

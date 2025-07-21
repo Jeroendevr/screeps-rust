@@ -71,6 +71,8 @@ pub fn game_loop() {
         }
     }
 
+    // Counting Creep
+    info!("Creep count: {}", count_creep());
 
     // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
     // is used; this should be removed if you're using RawMemory/serde for persistence
@@ -103,8 +105,6 @@ pub fn game_loop() {
     // info!("done! cpu: {}", game::cpu::get_used())
 }
 
-
-
 fn spawn_creep(spawn: &StructureSpawn, body: &[Part; 4], name: &str) -> Result<(), SpawnCreepErrorCode> {
     info!("spawn spawning is {}, with body {:?} and given name {}",spawn.name(), body, name);
     match spawn.spawn_creep(body, name) {
@@ -122,9 +122,10 @@ fn spawn_creep_with_options(spawn: &StructureSpawn, body: &[Part; 4], name: &str
     spawn.spawn_creep_with_options(body, name, &opts)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum RoleCreep {
     Harvester,
+    Builder
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -199,4 +200,12 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
             }
         }
     }
+}
+
+fn count_creep() -> usize {
+    game::creeps()
+        .values()
+        .filter_map(|creep| serde_wasm_bindgen::from_value::<CreepMemory>(creep.memory()).ok())
+        .filter(|creep_mem| matches!(creep_mem.role, RoleCreep::Harvester))
+        .count()
 }
